@@ -8,9 +8,12 @@
 #include <QGraphicsRectItem>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLineEdit>
 
 // Структура прямоугольника для отслеживания координат точек
 struct RectangleCords {
+    QPair<int, int> center; // Добавил коор-ты центральной точки
     QPair<int, int> leftTop;
     QPair<int, int> rightTop;
     QPair<int, int> rightBottom;
@@ -32,7 +35,9 @@ private:
     QGraphicsScene* scene;
     QGraphicsView* view;
     QVBoxLayout* graphicLayout; // доп слой для корректного расположения кнопки
+    QHBoxLayout* btnLayout; // доп слой, куда поместим кнопку и lineEdit, в которой вводят расстояние
     QPushButton* btnMove;
+    QLineEdit* yParam;
 
     bool isIntersecting(const RectangleCords& rect1, const RectangleCords& rect2) const;
     void moveRectangles();
