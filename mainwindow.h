@@ -1,8 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "graphic.h"
-
 #include <QMainWindow>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -10,6 +8,9 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QVector>
+#include "rectangle.h"
+#include "scene.h"
 
 class MainWindow : public QMainWindow
 {
@@ -22,7 +23,11 @@ private:
     QList<QHBoxLayout*> figureLayouts; // Список слоев для каждой фигуры (у каждой фигуры свой слой)
     QList<QLineEdit*> figureParamsFields; // У каждой фигуры свой список параметров
     QPushButton* btnDraw;
-    Graphic* graphic; // Экземпляр класса второго окна (график)
+    Scene* sceneWindow; // Экземпляр второго окна с отображением фигур
+
+    // Храним в mainWindow исходные прямоугольники и их центры
+    std::vector<Rectangle>rectangles;
+    std::vector<std::pair<int, int>>rectanglesCenters;
 
     void setupUi();
     void createFigureInputFields(int numFigures);
@@ -35,4 +40,5 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 };
+
 #endif // MAINWINDOW_H
