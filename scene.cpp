@@ -61,6 +61,7 @@ void Scene::onMoveBtnClicked() {
     drawRectangles(moveManager.getMovedRectangles());
 }
 
+
 Scene::~Scene() {
     // Деструктор пуст, т.к. у виджетов указал родителя
 }

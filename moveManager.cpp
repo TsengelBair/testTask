@@ -1,5 +1,5 @@
 #include "movemanager.h"
-
+#include <iostream>
 #include <algorithm>
 
 MoveManager::MoveManager(const std::vector<Rectangle>& rectangles, int yInterval)
@@ -24,14 +24,12 @@ MoveManager::MoveManager(const std::vector<Rectangle>& rectangles, int yInterval
     movedRectangles = originalRectangles;
 }
 
-// bool MoveManager::isIntersecting(const Rectangle &rect1, const Rectangle &rect2) const
-// {
-//     // Проверка пересечения прямоугольников
-//     return !(rect1.getRightTop().first < rect2.getLeftTop().first ||   // rect1 находится левее rect2
-//              rect1.getLeftTop().first > rect2.getRightTop().first ||   // rect1 находится правее rect2
-//              rect1.getLeftTop().second > rect2.getLeftBottom().second ||  // rect1 находится выше rect2
-//              rect1.getLeftBottom().second < rect2.getLeftTop().second);  // rect1 находится ниже rect2
-// }
+bool MoveManager::isIntersecting(const Rectangle &rect1, const Rectangle &rect2) const {
+    return !(rect1.getRightTop().first < rect2.getLeftTop().first ||   // rect1 находится левее rect2
+             rect1.getLeftTop().first > rect2.getRightTop().first ||   // rect1 находится правее rect2
+             rect1.getLeftTop().second > rect2.getLeftBottom().second ||  // rect1 находится выше rect2
+             rect1.getLeftBottom().second < rect2.getLeftTop().second);  // rect1 находится ниже rect2
+}
 
 void MoveManager::moveRectangles() {
     if (movedRectangles.empty()) {
@@ -40,7 +38,6 @@ void MoveManager::moveRectangles() {
 
     // Перемещаем фигуры так, чтобы их границы не пересекались
     for (size_t i = 0; i < movedRectangles.size() - 1; ++i) {
-        // Проверяем, нужно ли переместить следующий прямоугольник
         int minYStep = movedRectangles[i].getBottom() - movedRectangles[i + 1].getTop();
         if (minYStep > 0) {
             // Перемещаем следующий прямоугольник вниз
@@ -72,10 +69,22 @@ void MoveManager::moveRectangles() {
     for (const auto& rect : movedRectangles) {
         movedCenters.emplace_back(rect.getCenter());
     }
+
+    std::cout << "Original Centers:" << std::endl;
+    for (const auto& center : originalCenters) {
+        std::cout << "Center: (" << center.first << ", " << center.second << ")" << std::endl;
+    }
+
+    std::cout << "New Centers:" << std::endl;
+    for (const auto& center : movedCenters) {
+        std::cout << "Center: (" << center.first << ", " << center.second << ")" << std::endl;
+    }
 }
 
-
-std::vector<Rectangle> MoveManager::getMovedRectangles()
-{
+std::vector<Rectangle> MoveManager::getMovedRectangles() {
     return movedRectangles;
+}
+
+std::vector<std::pair<int, int>> MoveManager::getMovedCenters()  {
+    return movedCenters;
 }

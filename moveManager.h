@@ -14,6 +14,7 @@ public:
     bool isIntersecting(const Rectangle& rect1, const Rectangle& rect2) const;
 
     std::vector<Rectangle>getMovedRectangles();
+    std::vector<std::pair<int, int>>getMovedCenters();
 
 private:
     std::vector<Rectangle>originalRectangles;
