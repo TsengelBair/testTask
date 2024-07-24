@@ -36,30 +36,33 @@ void MoveManager::moveRectangles() {
         return;
     }
 
-    // Перемещаем фигуры так, чтобы их границы не пересекались
+    // Перемещаем прямоугольники так, чтобы их границы пересекались
     for (size_t i = 0; i < movedRectangles.size() - 1; ++i) {
-        int minYStep = movedRectangles[i].getBottom() - movedRectangles[i + 1].getTop();
-        if (minYStep > 0) {
-            // Перемещаем следующий прямоугольник вниз
-            movedRectangles[i + 1].setLeftTop({movedRectangles[i + 1].getLeftTop().first, movedRectangles[i + 1].getLeftTop().second + minYStep + interval});
-            movedRectangles[i + 1].setRightTop({movedRectangles[i + 1].getRightTop().first, movedRectangles[i + 1].getRightTop().second + minYStep + interval});
-            movedRectangles[i + 1].setLeftBottom({movedRectangles[i + 1].getLeftBottom().first, movedRectangles[i + 1].getLeftBottom().second + minYStep + interval});
-            movedRectangles[i + 1].setRightBottom({movedRectangles[i + 1].getRightBottom().first, movedRectangles[i + 1].getRightBottom().second + minYStep + interval});
-
-            // Обновляем центр после перемещения
-            movedRectangles[i + 1].updateCenterFromCorners();
+        for (size_t j = i + 1; j < movedRectangles.size(); ++j) {
+            // Проверяем пересечения
+            if (isIntersecting(movedRectangles[i], movedRectangles[j])) {
+                // Вычисляем новый Y для верхнего прямоугольника, чтобы нижняя граница одного пересекалась с верхней границей другого
+                int newY = movedRectangles[i].getLeftTop().second - movedRectangles[j].getHeight();
+                movedRectangles[j].setLeftTop({movedRectangles[j].getLeftTop().first, newY});
+                movedRectangles[j].setRightTop({movedRectangles[j].getRightTop().first, newY});
+                movedRectangles[j].setLeftBottom({movedRectangles[j].getLeftBottom().first, newY + movedRectangles[j].getHeight()});
+                movedRectangles[j].setRightBottom({movedRectangles[j].getRightBottom().first, newY + movedRectangles[j].getHeight()});
+            }
         }
     }
 
-    // Перемещаем все прямоугольники на добавленный интервал
-    for (size_t i = 0; i < movedRectangles.size(); ++i) {
-        int currentInterval = interval * (i + 1);
-        movedRectangles[i].setLeftTop({movedRectangles[i].getLeftTop().first, movedRectangles[i].getLeftTop().second + currentInterval});
-        movedRectangles[i].setRightTop({movedRectangles[i].getRightTop().first, movedRectangles[i].getRightTop().second + currentInterval});
-        movedRectangles[i].setLeftBottom({movedRectangles[i].getLeftBottom().first, movedRectangles[i].getLeftBottom().second + currentInterval});
-        movedRectangles[i].setRightBottom({movedRectangles[i].getRightBottom().first, movedRectangles[i].getRightBottom().second + currentInterval});
+    // Добавляем интервал между прямоугольниками
+    for (size_t i = 1; i < movedRectangles.size(); ++i) {
+        int prevBottomY = movedRectangles[i-1].getLeftBottom().second;
+        int newY = prevBottomY + interval;
 
-        // Обновляем центр после сдвига
+        int height = movedRectangles[i].getHeight();
+        movedRectangles[i].setLeftTop({movedRectangles[i].getLeftTop().first, newY});
+        movedRectangles[i].setRightTop({movedRectangles[i].getRightTop().first, newY});
+        movedRectangles[i].setLeftBottom({movedRectangles[i].getLeftBottom().first, newY + height});
+        movedRectangles[i].setRightBottom({movedRectangles[i].getRightBottom().first, newY + height});
+
+        // Обновляем центр после перемещения
         movedRectangles[i].updateCenterFromCorners();
     }
 
@@ -80,6 +83,8 @@ void MoveManager::moveRectangles() {
         std::cout << "Center: (" << center.first << ", " << center.second << ")" << std::endl;
     }
 }
+
+
 
 std::vector<Rectangle> MoveManager::getMovedRectangles() {
     return movedRectangles;
